@@ -19,7 +19,7 @@ RESULTS_FILE = ROOT / "data" / "results.json"
 BASE_URL = "https://www.parkrun.com.au/parkrunner"
 BASE_URL_SUFFIX = "all"
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/116.0"
+    "User-Agent": "parkrun/1.2.7 CFNetwork/1121.2.2 Darwin/19.3.0"
 }
 
 def read_athletes() -> list[Parkrunner]:

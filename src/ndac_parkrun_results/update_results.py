@@ -105,6 +105,11 @@ def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> list[Parkru
     logger.debug(f"{athlete.display_name} URL: {url}")
     response = session.get(url, headers=HEADERS, timeout=35)
     logger.debug(f"Got {response.status_code} response for ID {athlete.parkrun_id} ({athlete.display_name}) request")
+
+    if response.status_code < 200 or response.status_code > 299:
+        logger.debug(f"Method: {response.request.method}")
+        logger.debug(f"Headers: {response.headers}")
+        logger.debug(f"Body: {response.text[:1000]}")
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")

@@ -24,6 +24,14 @@
       "display_name": "Kobi Batson",
       "parkrun_join_date": "2021-02-13",
       "active": true
+    },
+    {
+      "parkrun_id": "1888996",
+      "first_name": "Nicholas",
+      "last_name": "Madden",
+      "display_name": "Nick Madden",
+      "parkrun_join_date": "2015-10-03",
+      "active": true
     }
   ]
 }

@@ -2,6 +2,7 @@
 """
 from datetime import date
 import json
+import os
 from pathlib import Path
 import random
 import time
@@ -156,7 +157,19 @@ def main():
     if not athletes:
         raise SystemExit(f"No athlete IDs found in {ATHLETES_FILE}")
 
-    session = requests.Session()
+    # session = requests.Session()
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        logger.info("Environment is GITHUB_ACTIONS")
+        try:
+            from curl_cffi import requests as curl_requests
+
+            s = curl_requests.Session(impersonate="chrome124")
+            s.headers.update(HEADERS)
+            return s
+        except ImportError:
+            logger.exception("Note: curl_cffi not installed; using requests (often blocked on GHA).")
+    s = requests.Session()
+    s.headers.update(HEADERS)
 
     new_results: dict[str, list[ParkrunResult]] = {}
     failures: dict[str, str] = {}

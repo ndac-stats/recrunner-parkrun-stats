@@ -8,4 +8,5 @@ dependencies = [
     "beautifulsoup4>=4.15.0",
     "loguru>=0.8.0",
     "requests>=2.34.2",
+    "curl_cffi>=0.7.0,<0.9"
 ]

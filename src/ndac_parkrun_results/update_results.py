@@ -163,13 +163,12 @@ def main():
         try:
             from curl_cffi import requests as curl_requests
 
-            s = curl_requests.Session(impersonate="chrome124")
-            s.headers.update(HEADERS)
-            return s
+            session = curl_requests.Session(impersonate="chrome124")
+            session.headers.update(HEADERS)
         except ImportError:
             logger.exception("Note: curl_cffi not installed; using requests (often blocked on GHA).")
-    s = requests.Session()
-    s.headers.update(HEADERS)
+            session = requests.Session()
+            session.headers.update(HEADERS)
 
     new_results: dict[str, list[ParkrunResult]] = {}
     failures: dict[str, str] = {}

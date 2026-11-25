@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-11-22T00:00:00Z",
+  "results": [
+    {"athlete":"Alex Runner","athlete_id":"1234567","event":"Torrens parkrun","date":"2026-11-01","run_number":50,"position":12,"time":"22:31","age_grade":"64.20%","pb":true,"milestone":"50 parkruns"},
+    {"athlete":"Sam Strider","athlete_id":"2345678","event":"Torrens parkrun","date":"2026-11-08","run_number":101,"position":8,"time":"20:45","age_grade":"71.10%","pb":false},
+    {"athlete":"Alex Runner","athlete_id":"1234567","event":"Pakapakanthi parkrun","date":"2026-11-15","run_number":51,"position":19,"time":"23:02","age_grade":"62.80%","pb":false},
+    {"athlete":"Jamie Pace","athlete_id":"3456789","event":"Torrens parkrun","date":"2026-10-25","run_number":25,"position":31,"time":"25:18","age_grade":"58.40%","pb":true,"milestone":"25 volunteer occasions","milestone_type":"volunteer"},
+    {"athlete":"Sam Strider","athlete_id":"2345678","event":"Torrens parkrun","date":"2026-10-18","run_number":100,"position":9,"time":"20:59","age_grade":"70.20%","pb":false,"milestone":"100 parkruns","milestone_type":"run"}
+  ]
+}

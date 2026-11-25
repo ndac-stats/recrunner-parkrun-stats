@@ -9,6 +9,7 @@
     * UI for adding/removing active members
 * parkrun regions (country, state)
 * yellow top tracking
+* transfer of existing stats
 
 ## Improve HTTP Error Handling
 ```python

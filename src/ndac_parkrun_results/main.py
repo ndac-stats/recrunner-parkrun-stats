@@ -5,7 +5,7 @@ import time
 
 from loguru import logger
 
-from parkrun_types import Parkrunner, ParkrunResult
+from parkrun_types import ParkrunResult
 from scraper import create_session, fetch_athlete
 from storage import read_athletes, update_athlete_results
 

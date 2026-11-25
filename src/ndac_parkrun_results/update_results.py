@@ -2,7 +2,6 @@
 """
 from datetime import date
 import json
-import os
 from pathlib import Path
 import random
 import time
@@ -20,21 +19,7 @@ RESULTS_FILE = ROOT / "data" / "results.json"
 BASE_URL = "https://www.parkrun.com.au/parkrunner"
 BASE_URL_SUFFIX = "all"
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Accept": (
-        "text/html,application/xhtml+xml,application/xml;q=0.9,"
-        "image/avif,image/webp,image/apng,*/*;q=0.8"
-    ),
-    "Accept-Language": "en-GB,en;q=0.9",
-    "Cache-Control": "max-age=0",
-    "Sec-Ch-Ua": '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-    "Sec-Ch-Ua-Mobile": "?0",
-    "Sec-Ch-Ua-Platform": '"Windows"',
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/116.0"
 }
 
 def read_athletes() -> list[Parkrunner]:
@@ -157,18 +142,7 @@ def main():
     if not athletes:
         raise SystemExit(f"No athlete IDs found in {ATHLETES_FILE}")
 
-    # session = requests.Session()
-    if os.environ.get("GITHUB_ACTIONS") == "true":
-        logger.info("Environment is GITHUB_ACTIONS")
-        try:
-            from curl_cffi import requests as curl_requests
-
-            session = curl_requests.Session(impersonate="chrome124")
-            session.headers.update(HEADERS)
-        except ImportError:
-            logger.exception("Note: curl_cffi not installed; using requests (often blocked on GHA).")
-            session = requests.Session()
-            session.headers.update(HEADERS)
+    session = requests.Session()
 
     new_results: dict[str, list[ParkrunResult]] = {}
     failures: dict[str, str] = {}

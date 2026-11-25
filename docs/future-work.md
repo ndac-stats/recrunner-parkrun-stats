@@ -7,6 +7,8 @@
     * display of monthly report for newsletter
     * display of stats
     * UI for adding/removing active members
+* parkrun regions (country, state)
+* yellow top tracking
 
 ## Improve HTTP Error Handling
 ```python

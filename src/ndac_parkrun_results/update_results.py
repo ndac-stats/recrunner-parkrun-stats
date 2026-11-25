@@ -100,24 +100,32 @@ def parse_results(soup: BeautifulSoup) -> list[ParkrunResult]:
     return results
 
 def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> list[ParkrunResult]:
-    # TODO: write docstring
+    """Requests the results page for a given athlete and extracts each result.
+
+    Args:
+        session (requests.Session): active requests session
+        athlete (Parkrunner): athlete to retrieve results for
+
+    Returns:
+        results (list[ParkrunResult]): list of parkrun results for the athlete
+    """
     url = f"{BASE_URL}/{athlete.parkrun_id}/{BASE_URL_SUFFIX}"
     logger.debug(f"{athlete.display_name} URL: {url}")
-    response = session.get(url, headers=HEADERS, timeout=35)
+    response = session.get(url, timeout=35)
     logger.debug(f"Got {response.status_code} response for ID {athlete.parkrun_id} ({athlete.display_name}) request")
 
-    if response.status_code < 200 or response.status_code > 299:
-        logger.debug(f"Method: {response.request.method}")
-        logger.debug(f"Headers: {response.headers}")
-        logger.debug(f"Body: {response.text[:1000]}")
     response.raise_for_status()
 
     soup = BeautifulSoup(response.content, "html.parser")
 
     return parse_results(soup)
 
-def update_athlete_results(new_results: dict[str, list[ParkrunResult]]):
-    # TODO: write docstring
+def update_athlete_results(new_results: dict[str, list[ParkrunResult]]) -> None:
+    """Updates the results file with the provided, new results
+
+    Args:
+        new_results (dict[str, list[ParkrunResult]]): dictionary of parkrun ID to parkrun results
+    """
     existing_results: dict[str, list[Any]]
     if RESULTS_FILE.exists():
         with RESULTS_FILE.open(mode="r", encoding="utf-8") as results_fp:
@@ -143,6 +151,7 @@ def main():
         raise SystemExit(f"No athlete IDs found in {ATHLETES_FILE}")
 
     session = requests.Session()
+    session.headers.update(HEADERS)
 
     new_results: dict[str, list[ParkrunResult]] = {}
     failures: dict[str, str] = {}
@@ -173,9 +182,9 @@ def main():
     update_athlete_results(new_results)
 
     logger.info("Results update complete")
-    logger.info(f"Successfully updates {len(new_results)}")
+    logger.info(f"Successfully updated {len(new_results)} results")
     if len(failures):
-        logger.warning(f"Failed to update {len(failures)}")
+        logger.warning(f"Failed to update {len(failures)} results")
         logger.info("Summary of failures")
         for athlete_id, failure_reason in failures.items():
             logger.warning(f"ID {athlete_id}: {failure_reason}")

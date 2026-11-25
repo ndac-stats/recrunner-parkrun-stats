@@ -2,6 +2,7 @@
 """
 from datetime import datetime
 import json
+import os
 from pathlib import Path
 import random
 import time
@@ -148,8 +149,7 @@ def update_athlete_results(new_results: dict[str, list[ParkrunResult]]) -> None:
             existing_results[athlete_id].append(result.to_dict())
 
     # Save merged results
-    with RESULTS_FILE.open(mode="w", encoding="utf-8") as results_fp:
-        json.dump(existing_results, results_fp, indent=4, ensure_ascii=False)
+    write_json_atomic(existing_results, RESULTS_FILE)
 
     logger.success("Athlete results successfully updated.")
 
@@ -178,6 +178,19 @@ def time_to_seconds(run_time: str) -> int:
     else:
         raise ValueError("Time must be in mm:ss or hh:mm:ss format")
 
+def write_json_atomic(data: dict, filepath: Path) -> None:
+    """Write JSON safely without risking the existing file.
+
+    Args:
+        data (dict): data to be written to file
+        filepath (Path): file to write the data to
+    """
+    temp_file = filepath.with_suffix(".tmp")
+
+    with temp_file.open("w", encoding="utf-8") as fp:
+        json.dump(data, fp, indent=4, ensure_ascii=False)
+
+    os.replace(temp_file, filepath)
 
 def main():
     athletes = read_athletes()

@@ -5,7 +5,7 @@ import time
 
 from loguru import logger
 
-from parkrun_types import ParkrunResult
+from parkrun_types import ParkrunID, ParkrunnerResultHistory
 from scraper import create_session, fetch_athlete
 from storage import read_athletes, update_athlete_results
 
@@ -20,8 +20,8 @@ def main():
         else:
             logger.info(f"Skipping {athlete.display_name} (inactive)")
 
-    new_results: dict[str, list[ParkrunResult]] = {}
-    failures: dict[str, str] = {}
+    new_results: dict[ParkrunID, ParkrunnerResultHistory] = {}
+    failures: dict[ParkrunID, str] = {}
 
     try:
         for index, athlete in enumerate(active_athletes):

@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from parkrun_types import Parkrunner, ParkrunResult
+from parkrun_types import Parkrunner, ParkrunnerResultHistory
 from parser import parse_results
 
 BASE_URL = "https://www.parkrun.com.au/parkrunner"
@@ -23,7 +23,7 @@ def create_session() -> requests.Session:
 
     return session
 
-def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> list[ParkrunResult]:
+def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> ParkrunnerResultHistory:
     """Requests the results page for a given athlete and extracts each result.
 
     Args:
@@ -31,7 +31,7 @@ def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> list[Parkru
         athlete (Parkrunner): athlete to retrieve results for
 
     Returns:
-        results (list[ParkrunResult]): list of parkrun results for the athlete
+        results (ParkrunnerResultHistory): list of parkrun results for the athlete
     """
     url = f"{BASE_URL}/{athlete.parkrun_id}/{BASE_URL_SUFFIX}"
     logger.debug(f"{athlete.display_name} URL: {url}")

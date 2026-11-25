@@ -3,18 +3,18 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from parkrun_types import ParkrunResult
+from parkrun_types import ParkrunID, ParkrunResult, ParkrunnerResultHistory
 
 
-def parse_results(soup: BeautifulSoup, athlete_id: str) -> list[ParkrunResult]:
+def parse_results(soup: BeautifulSoup, athlete_id: ParkrunID) -> ParkrunnerResultHistory:
     """Extract the list of results from an athlete's results page
 
     Args:
         soup (BeautifulSoup): The BeautifulSoup representation of the athlete"s results page
-        athlete_id (str): the athlete parkrun ID for the results being parsed
+        athlete_id (ParkrunID): the athlete parkrun ID for the results being parsed
 
     Returns:
-        results (list[ParkrunResult]): list of athlete's results data
+        results (ParkrunnerResultHistory): list of athlete's results data
     """
     results = []
 

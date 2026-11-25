@@ -5,7 +5,7 @@ from typing import Any
 
 from loguru import logger
 
-from parkrun_types import Parkrunner, ParkrunResult
+from parkrun_types import ParkrunID, Parkrunner, ParkrunnerResultHistory
 
 ROOT = Path(__file__).resolve().parents[2]
 ATHLETES_FILE = ROOT / "data" / "athletes.json"
@@ -33,13 +33,13 @@ def read_athletes() -> list[Parkrunner]:
 
     return athletes
 
-def update_athlete_results(new_results: dict[str, list[ParkrunResult]]) -> None:
+def update_athlete_results(new_results: dict[ParkrunID, ParkrunnerResultHistory]) -> None:
     """Updates the results file with the provided, new results
 
     Args:
-        new_results (dict[str, list[ParkrunResult]]): dictionary of parkrun ID to parkrun results
+        new_results (dict[ParkrunID, ParkrunnerResultHistory]): dictionary of parkrun ID to parkrun results
     """
-    existing_results: dict[str, list[Any]]
+    existing_results: dict[ParkrunID, list[Any]]
     if RESULTS_FILE.exists():
         with RESULTS_FILE.open(mode="r", encoding="utf-8") as results_fp:
             existing_results = json.load(results_fp)
@@ -56,8 +56,6 @@ def update_athlete_results(new_results: dict[str, list[ParkrunResult]]) -> None:
     write_json_atomic(existing_results, RESULTS_FILE)
 
     logger.success("Athlete results successfully updated.")
-
-
 
 def write_json_atomic(data: dict, filepath: Path) -> None:
     """Write JSON safely without risking the existing file.

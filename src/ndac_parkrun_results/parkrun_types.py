@@ -3,9 +3,12 @@ from datetime import date
 from typing import Any
 
 
+type ParkrunID = str
+type ParkrunnerResultHistory = list[ParkrunResult]
+
 @dataclass
 class Parkrunner:
-    parkrun_id: str
+    parkrun_id: ParkrunID
     first_name: str
     last_name: str
     display_name: str
@@ -39,7 +42,7 @@ class Parkrunner:
 
 @dataclass
 class ParkrunResult:
-    parkrun_id: str
+    parkrun_id: ParkrunID
     event: str
     run_date: date
     run_number: int

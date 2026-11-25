@@ -5,14 +5,15 @@ from typing import Any
 
 from loguru import logger
 
+from config import StorageConfig
 from parkrun_types import ParkrunID, Parkrunner, ParkrunnerResultHistory
 
-ROOT = Path(__file__).resolve().parents[2]
-ATHLETES_FILE = ROOT / "data" / "athletes.json"
-RESULTS_FILE = ROOT / "data" / "results.json"
 
-def read_athletes() -> list[Parkrunner]:
+def read_athletes(config: StorageConfig) -> list[Parkrunner]:
     """Read and return list of athletes
+
+    Args:
+        config (StorageConfig): storage configuration
 
     Raises:
         SystemExit: Raised when no athlete IDs are found
@@ -21,27 +22,31 @@ def read_athletes() -> list[Parkrunner]:
         athletes (list[Parkrunner]): list of athlete data
     """
     athletes = []
+    athletes_file = config.athletes_file
 
-    with ATHLETES_FILE.open(mode="r", encoding="utf-8") as athlete_fp:
+    with athletes_file.open(mode="r", encoding="utf-8") as athlete_fp:
         data = json.load(athlete_fp)
         for record in data["runners"]:
             athlete = Parkrunner.from_dict(record)
             athletes.append(athlete)
 
     if not athletes:
-        raise SystemExit(f"No athlete IDs found in {ATHLETES_FILE}")
+        raise SystemExit(f"No athlete IDs found in {athletes_file}")
 
     return athletes
 
-def update_athlete_results(new_results: dict[ParkrunID, ParkrunnerResultHistory]) -> None:
+def update_athlete_results(new_results: dict[ParkrunID, ParkrunnerResultHistory], config: StorageConfig) -> None:
     """Updates the results file with the provided, new results
 
     Args:
         new_results (dict[ParkrunID, ParkrunnerResultHistory]): dictionary of parkrun ID to parkrun results
+        config (StorageConfig): storage configuration
     """
     existing_results: dict[ParkrunID, list[Any]]
-    if RESULTS_FILE.exists():
-        with RESULTS_FILE.open(mode="r", encoding="utf-8") as results_fp:
+    results_file = config.results_file
+
+    if results_file.exists():
+        with results_file.open(mode="r", encoding="utf-8") as results_fp:
             existing_results = json.load(results_fp)
     else:
         existing_results = {}
@@ -53,9 +58,9 @@ def update_athlete_results(new_results: dict[ParkrunID, ParkrunnerResultHistory]
             existing_results[athlete_id].append(result.to_dict())
 
     # Save merged results
-    write_json_atomic(existing_results, RESULTS_FILE)
+    write_json_atomic(existing_results, results_file)
 
-    logger.success("Athlete results successfully updated.")
+    logger.success(f"Athlete results successfully written to {results_file}")
 
 def write_json_atomic(data: dict, filepath: Path) -> None:
     """Write JSON safely without risking the existing file.

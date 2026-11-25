@@ -5,6 +5,7 @@ import time
 
 from loguru import logger
 
+from config import CONFIG
 from parkrun_types import ParkrunID, ParkrunnerResultHistory
 from scraper import create_session, fetch_athlete
 from storage import read_athletes, update_athlete_results
@@ -36,7 +37,10 @@ def main():
 
             # A deliberate pause between requests to avoid hammering the site.
             if index < len(active_athletes) - 1:
-                human_like_delay = 10 + random.randrange(2, 6) + random.random()
+                human_like_delay = random.randrange(
+                    CONFIG.requests.min_delay,
+                    CONFIG.requests.max_delay
+                ) + random.random()
                 logger.debug(f"Sleeping for {human_like_delay:.2f} seconds")
                 time.sleep(human_like_delay)
     finally:

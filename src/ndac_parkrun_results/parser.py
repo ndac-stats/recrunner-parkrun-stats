@@ -3,15 +3,17 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from loguru import logger
 
+from config import ParsingConfig
 from parkrun_types import ParkrunID, ParkrunResult, ParkrunnerResultHistory
 
 
-def parse_results(soup: BeautifulSoup, athlete_id: ParkrunID) -> ParkrunnerResultHistory:
+def parse_results(soup: BeautifulSoup, athlete_id: ParkrunID, config: ParsingConfig) -> ParkrunnerResultHistory:
     """Extract the list of results from an athlete's results page
 
     Args:
         soup (BeautifulSoup): The BeautifulSoup representation of the athlete"s results page
         athlete_id (ParkrunID): the athlete parkrun ID for the results being parsed
+        config (ParsingConfig): results parsing configuration
 
     Returns:
         results (ParkrunnerResultHistory): list of athlete's results data
@@ -31,7 +33,7 @@ def parse_results(soup: BeautifulSoup, athlete_id: ParkrunID) -> ParkrunnerResul
             result = ParkrunResult(
                 parkrun_id=athlete_id,
                 event=row[0],
-                run_date=datetime.strptime(row[1], "%d/%m/%Y").date(),
+                run_date=datetime.strptime(row[1], config.date_format).date(),
                 run_number=int(row[2]),
                 position=int(row[3]),
                 time_seconds=time_to_seconds(row[4]),

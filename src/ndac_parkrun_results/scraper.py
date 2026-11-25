@@ -3,39 +3,39 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
+from config import WebsiteConfig
 from parkrun_types import Parkrunner, ParkrunnerResultHistory
 from parser import parse_results
 
-BASE_URL = "https://www.parkrun.com.au/parkrunner"
-BASE_URL_SUFFIX = "all"
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/116.0"
-}
 
-def create_session() -> requests.Session:
+def create_session(config: WebsiteConfig) -> requests.Session:
     """Create a configured HTTP session
+
+    Args:
+        config (WebsiteConfig): website configuration
 
     Returns:
         requests.Session: an active and configured requests session
     """
     session = requests.Session()
-    session.headers.update(HEADERS)
+    session.headers.update(config.headers)
 
     return session
 
-def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> ParkrunnerResultHistory:
+def fetch_athlete(session: requests.Session, athlete: Parkrunner, config: WebsiteConfig) -> ParkrunnerResultHistory:
     """Requests the results page for a given athlete and extracts each result.
 
     Args:
         session (requests.Session): active requests session
         athlete (Parkrunner): athlete to retrieve results for
+        config (WebsiteConfig): website configuration
 
     Returns:
         results (ParkrunnerResultHistory): list of parkrun results for the athlete
     """
-    url = f"{BASE_URL}/{athlete.parkrun_id}/{BASE_URL_SUFFIX}"
+    url = f"{config.base_url}/{athlete.parkrun_id}/{config.results_path}"
     logger.debug(f"{athlete.display_name} URL: {url}")
-    response = session.get(url, timeout=35)
+    response = session.get(url, timeout=config.timeout)
     logger.debug(f"Got {response.status_code} response for ID {athlete.parkrun_id} ({athlete.display_name}) request")
 
     response.raise_for_status()

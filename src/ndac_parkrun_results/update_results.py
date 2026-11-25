@@ -1,6 +1,6 @@
 """Fetch public parkrun athlete histories and publish a small JSON snapshot.
 """
-from datetime import date
+from datetime import datetime
 import json
 from pathlib import Path
 import random
@@ -69,11 +69,12 @@ def extract_results_from_page(soup: BeautifulSoup) -> list[list[str]]:
 
     return results
 
-def parse_results(soup: BeautifulSoup) -> list[ParkrunResult]:
+def parse_results(soup: BeautifulSoup, athlete_id: str) -> list[ParkrunResult]:
     """Extract the list of results from an athlete's results page
 
     Args:
         soup (BeautifulSoup): The BeautifulSoup representation of the athlete"s results page
+        athlete_id (str): the athlete parkrun ID for the results being parsed
 
     Returns:
         results (list[ParkrunResult]): list of athlete's results data
@@ -85,17 +86,24 @@ def parse_results(soup: BeautifulSoup) -> list[ParkrunResult]:
     table_data = extract_results_from_page(soup)
 
     for row in table_data:
-        result = ParkrunResult(
-            parkrun_id="123", # TODO: test if it can be left blank and populated later
-            event=row[result_columns.index("Event")],
-            run_date=date(2026, 12, 1),#row[result_columns.index("Run Date")], # TODO: convert to date
-            run_number=row[result_columns.index("Run Number")], # TODO: convert to int
-            position=row[result_columns.index("Pos")],  # TODO: convert to int
-            time_seconds=row[result_columns.index("Time")], # TODO: interpret time and convert to seconds
-            age_grade=row[result_columns.index("Age Grade")],   # TODO: convert to float
-            pb=row[result_columns.index("PB?")] # TODO: cast to boolean
-        )
-        results.append(result)
+        if len(row) != len(result_columns):
+            logger.warning(f"Skipping malformed result row for athlete {athlete_id}: {row}")
+            continue
+
+        try:
+            result = ParkrunResult(
+                parkrun_id=athlete_id,
+                event=row[0],
+                run_date=datetime.strptime(row[1], "%d/%m/%Y").date(),
+                run_number=int(row[2]),
+                position=int(row[3]),
+                time_seconds=time_to_seconds(row[4]),
+                age_grade=float(row[5][:-1]) / 100,
+                pb=True if "PB" in row[6] else False
+            )
+            results.append(result)
+        except (ValueError, TypeError) as exc:
+            logger.warning(f"Could not parse result for athlete {athlete_id}: {row}. {exc}")
 
     return results
 
@@ -118,7 +126,7 @@ def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> list[Parkru
 
     soup = BeautifulSoup(response.content, "html.parser")
 
-    return parse_results(soup)
+    return parse_results(soup, athlete.parkrun_id)
 
 def update_athlete_results(new_results: dict[str, list[ParkrunResult]]) -> None:
     """Updates the results file with the provided, new results
@@ -144,6 +152,32 @@ def update_athlete_results(new_results: dict[str, list[ParkrunResult]]) -> None:
         json.dump(existing_results, results_fp, indent=4, ensure_ascii=False)
 
     logger.success("Athlete results successfully updated.")
+
+def time_to_seconds(run_time: str) -> int:
+    """Convert a result time to seconds
+
+    Args:
+        run_time (str): Athlete's time in mm:ss or hh:mm:ss format
+
+    Raises:
+        ValueError: Raised when format of `run_time` is not mm:ss or hh:mm:ss
+
+    Returns:
+        seconds: Athlete's time in seconds
+    """
+    parts = list(map(int, run_time.split(":")))
+
+    if len(parts) == 2:  # mm:ss
+        minutes, seconds = parts
+        return minutes * 60 + seconds
+
+    elif len(parts) == 3:  # hh:mm:ss
+        hours, minutes, seconds = parts
+        return hours * 3600 + minutes * 60 + seconds
+
+    else:
+        raise ValueError("Time must be in mm:ss or hh:mm:ss format")
+
 
 def main():
     athletes = read_athletes()

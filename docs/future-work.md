@@ -11,6 +11,21 @@
 * yellow top tracking
 * transfer of existing stats
 
+## Boudnaries
+```python
+import geopandas as gpd
+
+# 1. Read the shapefile (ensure .shx and .dbf files are in the same folder)
+gdf = gpd.read_file("input.shp")
+
+# 2. Reproject to WGS 84 (lat/lon) if a CRS is defined
+if gdf.crs is not None:
+    gdf = gdf.to_crs(epsg=4326)
+
+# 3. Export to GeoJSON
+gdf.to_file("output.geojson", driver="GeoJSON")
+```
+
 ## Improve HTTP Error Handling
 ```python
 from requests.adapters import HTTPAdapter

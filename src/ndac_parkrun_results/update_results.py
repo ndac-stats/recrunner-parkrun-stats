@@ -112,7 +112,7 @@ def fetch_athlete(session: requests.Session, athlete: Parkrunner) -> list[Parkru
         logger.debug(f"Body: {response.text[:1000]}")
     response.raise_for_status()
 
-    soup = BeautifulSoup(response.text, "html.parser")
+    soup = BeautifulSoup(response.content, "html.parser")
 
     return parse_results(soup)
 
@@ -120,7 +120,7 @@ def update_athlete_results(new_results: dict[str, list[ParkrunResult]]):
     # TODO: write docstring
     existing_results: dict[str, list[Any]]
     if RESULTS_FILE.exists():
-        with RESULTS_FILE.open(mode="r") as results_fp:
+        with RESULTS_FILE.open(mode="r", encoding="utf-8") as results_fp:
             existing_results = json.load(results_fp)
     else:
         existing_results = {}
@@ -132,8 +132,8 @@ def update_athlete_results(new_results: dict[str, list[ParkrunResult]]):
             existing_results[athlete_id].append(result.to_dict())
 
     # Save merged results
-    with RESULTS_FILE.open(mode="w") as results_fp:
-        json.dump(existing_results, results_fp, indent=4)
+    with RESULTS_FILE.open(mode="w", encoding="utf-8") as results_fp:
+        json.dump(existing_results, results_fp, indent=4, ensure_ascii=False)
 
     logger.success("Athlete results successfully updated.")
 
@@ -148,6 +148,9 @@ def main():
     failures: dict[str, str] = {}
 
     for index, athlete in enumerate(athletes):
+        if not athlete.active:
+            logger.info(f"Skipping {athlete.display_name} (inactive)")
+            continue
         try:
             results = fetch_athlete(session, athlete)
             new_results[athlete.parkrun_id] = results

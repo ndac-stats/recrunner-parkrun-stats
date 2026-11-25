@@ -1742,7 +1742,7 @@
         },
         {
             "parkrun_id": "123",
-            "event": "F\u00e6lledparken",
+            "event": "Fælledparken",
             "run_date": "2026-12-01",
             "run_number": "543",
             "position": "33",
@@ -8560,7 +8560,7 @@
         },
         {
             "parkrun_id": "123",
-            "event": "\u014cr\u0101kei Bay",
+            "event": "Ōrākei Bay",
             "run_date": "2026-12-01",
             "run_number": "32",
             "position": "11",

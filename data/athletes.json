@@ -7,7 +7,7 @@
       "last_name": "Blair",
       "display_name": "Tobias Blair",
       "parkrun_join_date": "2021-02-06",
-      "active": true
+      "active": false
     },
     {
       "parkrun_id": "4099759",
@@ -15,7 +15,7 @@
       "last_name": "Jones",
       "display_name": "Michael Jones",
       "parkrun_join_date": "2017-12-23",
-      "active": true
+      "active": false
     },
     {
       "parkrun_id": "6919234",
@@ -23,7 +23,7 @@
       "last_name": "Batson",
       "display_name": "Kobi Batson",
       "parkrun_join_date": "2021-02-13",
-      "active": true
+      "active": false
     },
     {
       "parkrun_id": "1888996",
@@ -31,6 +31,14 @@
       "last_name": "Madden",
       "display_name": "Nick Madden",
       "parkrun_join_date": "2015-10-03",
+      "active": false
+    },
+    {
+      "parkrun_id": "6683490",
+      "first_name": "Alex",
+      "last_name": "Tam",
+      "display_name": "Alex Tam",
+      "parkrun_join_date": "2021-02-06",
       "active": true
     }
   ]

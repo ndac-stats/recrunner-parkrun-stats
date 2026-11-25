@@ -229,9 +229,9 @@ def main():
     update_athlete_results(new_results)
 
     logger.info("Results update complete")
-    logger.info(f"Successfully updated {len(new_results)} results")
+    logger.info(f"Successfully updated results for {len(new_results)} athlete(s)")
     if len(failures):
-        logger.warning(f"Failed to update {len(failures)} results")
+        logger.warning(f"Failed to update results for {len(failures)} athlete(s)")
         logger.info("Summary of failures")
         for athlete_id, failure_reason in failures.items():
             logger.warning(f"ID {athlete_id}: {failure_reason}")

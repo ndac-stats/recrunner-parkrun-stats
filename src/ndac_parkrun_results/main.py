@@ -11,8 +11,8 @@ from scraper import create_session, fetch_athlete
 from storage import read_athletes, update_athlete_results
 
 def main():
-    athletes = read_athletes()
-    session = create_session()
+    athletes = read_athletes(CONFIG.storage)
+    session = create_session(CONFIG.website)
 
     active_athletes = []
     for athlete in athletes:
@@ -27,7 +27,7 @@ def main():
     try:
         for index, athlete in enumerate(active_athletes):
             try:
-                results = fetch_athlete(session, athlete)
+                results = fetch_athlete(session, athlete, CONFIG)
                 new_results[athlete.parkrun_id] = results
                 logger.success(f"Fetched {athlete.parkrun_id} ({athlete.display_name}): {len(results)} results")
 
@@ -50,7 +50,7 @@ def main():
     if not new_results:
         raise SystemExit("Every athlete request failed; existing data was left untouched.")
 
-    update_athlete_results(new_results)
+    update_athlete_results(new_results, CONFIG.storage)
 
     logger.info("Results update complete")
     logger.info(f"Successfully updated results for {len(new_results)} athlete(s)")
